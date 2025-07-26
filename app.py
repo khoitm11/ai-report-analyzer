@@ -3,25 +3,23 @@ import os
 import hashlib
 from pathlib import Path
 
-# --- CÁC DÒNG IMPORT ĐÃ ĐƯỢC CẬP NHẬT THEO CẤU TRÚC MỚI CỦA LANGCHAIN ---
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-# ----------------------------------------------------------------------
 
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
 
-# --- Configuration ---
+#Config
 CACHE_DIR = Path("FAISS_INDEX_CACHE")
 CACHE_DIR.mkdir(exist_ok=True)
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 # Dòng này sẽ đọc key từ Hugging Face secrets khi triển khai
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
-# --- Language Model Initialization ---
+#Language Model
 llm = None
 if not GOOGLE_API_KEY:
     print("API Key not found. Please set GOOGLE_API_KEY in secrets.")
@@ -31,7 +29,7 @@ else:
     except Exception as e:
         print(f"LLM initialization error: {e}")
 
-# --- Core Logic (Không có thay đổi logic) ---
+#Core Logic
 def get_pdf_hash(pdf_path):
     with open(pdf_path, "rb") as f:
         return hashlib.sha256(f.read()).hexdigest()
@@ -102,7 +100,7 @@ def generate_analysis(retriever, analysis_type):
     except Exception as e:
         return f"An error occurred during analysis: {e}"
 
-# --- Giao diện Gradio (Không có thay đổi logic) ---
+#Gradio
 with gr.Blocks(theme=gr.themes.Default(primary_hue="blue"), title="AI Report Analyzer") as demo:
     retriever_state = gr.State(None)
 
