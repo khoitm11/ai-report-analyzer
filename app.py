@@ -2,10 +2,14 @@ import gradio as gr
 import os
 import hashlib
 from pathlib import Path
-from langchain.document_loaders import PyPDFLoader
+
+# --- CÁC DÒNG IMPORT ĐÃ ĐƯỢC CẬP NHẬT THEO CẤU TRÚC MỚI CỦA LANGCHAIN ---
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+# ----------------------------------------------------------------------
+
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
@@ -14,18 +18,20 @@ from langchain_google_genai import GoogleGenerativeAI
 CACHE_DIR = Path("FAISS_INDEX_CACHE")
 CACHE_DIR.mkdir(exist_ok=True)
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-# ⚠️ PASTE YOUR KEY HERE FOR LOCAL TESTING
-# Remember to remove it before pushing to GitHub/Hugging Face
-GOOGLE_API_KEY = "GOOGLE_API_KEY"
+# Dòng này sẽ đọc key từ Hugging Face secrets khi triển khai
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 # --- Language Model Initialization ---
 llm = None
-try:
-    llm = GoogleGenerativeAI(model="gemini-1.5-flash-latest", google_api_key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None
-except Exception as e:
-    print(f"LLM initialization error: {e}")
+if not GOOGLE_API_KEY:
+    print("API Key not found. Please set GOOGLE_API_KEY in secrets.")
+else:
+    try:
+        llm = GoogleGenerativeAI(model="gemini-1.5-flash-latest", google_api_key=GOOGLE_API_KEY)
+    except Exception as e:
+        print(f"LLM initialization error: {e}")
 
-# --- Core Logic ---
+# --- Core Logic (Không có thay đổi logic) ---
 def get_pdf_hash(pdf_path):
     with open(pdf_path, "rb") as f:
         return hashlib.sha256(f.read()).hexdigest()
@@ -96,7 +102,7 @@ def generate_analysis(retriever, analysis_type):
     except Exception as e:
         return f"An error occurred during analysis: {e}"
 
-# --- Gradio Interface ---
+# --- Giao diện Gradio (Không có thay đổi logic) ---
 with gr.Blocks(theme=gr.themes.Default(primary_hue="blue"), title="AI Report Analyzer") as demo:
     retriever_state = gr.State(None)
 
@@ -124,13 +130,11 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="blue"), title="AI Report Ana
                 gr.Markdown("### 3. Results")
                 output_textbox = gr.Markdown("Analysis results will appear here...")
 
-    # --- UI Logic ---
     def handle_pdf_upload(pdf_file):
         if pdf_file:
             retriever, status_msg = process_pdf_and_build_retriever(pdf_file.name)
             if retriever:
                 return retriever, status_msg, gr.Button(interactive=True), gr.Button(interactive=True), gr.Button(interactive=True)
-
         btn_update = gr.Button(interactive=False)
         return None, "Status: Waiting for PDF file...", btn_update, btn_update, btn_update
 
@@ -140,21 +144,9 @@ with gr.Blocks(theme=gr.themes.Default(primary_hue="blue"), title="AI Report Ana
         outputs=[retriever_state, status_output, summary_btn, swot_btn, risk_btn]
     )
 
-    summary_btn.click(
-        lambda retriever: generate_analysis(retriever, "Summary"),
-        inputs=[retriever_state],
-        outputs=[output_textbox]
-    )
-    swot_btn.click(
-        lambda retriever: generate_analysis(retriever, "SWOT Analysis"),
-        inputs=[retriever_state],
-        outputs=[output_textbox]
-    )
-    risk_btn.click(
-        lambda retriever: generate_analysis(retriever, "Risk Analysis"),
-        inputs=[retriever_state],
-        outputs=[output_textbox]
-    )
+    summary_btn.click(lambda r: generate_analysis(r, "Summary"), [retriever_state], [output_textbox])
+    swot_btn.click(lambda r: generate_analysis(r, "SWOT Analysis"), [retriever_state], [output_textbox])
+    risk_btn.click(lambda r: generate_analysis(r, "Risk Analysis"), [retriever_state], [output_textbox])
 
 if __name__ == "__main__":
-    demo.launch(debug=True)
+    demo.launch()
