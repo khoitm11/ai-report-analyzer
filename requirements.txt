@@ -1,0 +1,7 @@
+gradio
+google-generativeai
+langchain
+langchain-google-genai
+pypdf
+sentence-transformers
+faiss-cpu
