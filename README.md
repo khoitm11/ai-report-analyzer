@@ -10,29 +10,29 @@ pinned: false
 
 # 🤖 AI Report Analyzer
 
-An intelligent application that uses a Retrieval-Augmented Generation (RAG) pipeline to analyze PDF documents like annual reports, financial statements, or research papers.
+This project is an intelligent app designed to tackle the pain of reading dense PDF documents. Feed it an annual report, a research paper, or any long PDF, and it leverages a Retrieval-Augmented Generation (RAG) pipeline to give you back the insights you need, fast.
 
-## 🚀 How to Use
+## 🚀 How It Works
 
-1.  **Upload a PDF file** in the "Control Panel" on the left.
-2.  **Wait for the processing to complete.** The "Status" will update to "**Ready!**".
-    *   *Note: The first time you upload a file, this may take a moment while the knowledge base is being built. Subsequent uploads of the same file will be almost instant thanks to caching.*
-3.  **Click an analysis button** (📄 Summary, 📊 SWOT Analysis, ⚠️ Risk Analysis).
-4.  **View the result** in the "Results" section at the bottom.
+1.  **Upload a PDF** using the "Control Panel" on the left.
+2.  **Wait for the processing to finish.** The "Status" will change to **Ready!** when it's done.
+    *   *Heads up:* The first time you upload a document, it might take a moment to build the knowledge base. Subsequent analyses of the same file will be nearly instant thanks to caching.
+3.  **Click an analysis button** (e.g., 📄 Summary, 📊 SWOT Analysis, ⚠️ Risk Analysis).
+4.  **Check out the results** in the "Results" section at the bottom.
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
--   **Core AI:** Google Gemini (`gemini-1.5-flash-latest`)
--   **Orchestration Framework:** LangChain
--   **User Interface:** Gradio
--   **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2`
--   **Vector Database:** FAISS (`faiss-cpu`)
--   **PDF Processing:** `pypdf`
+-   **Core AI:** Google Gemini (`gemini-1.5-flash-latest`) - The brain of the operation.
+-   **Orchestration Framework:** LangChain - For chaining everything together.
+-   **User Interface:** Gradio - To spin up a simple and clean web UI.
+-   **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2` - For turning text into meaningful vectors.
+-   **Vector Database:** FAISS (`faiss-cpu`) - A super-fast, local vector store. No cloud dependencies!
+-   **PDF Processing:** `pypdf` - For wrestling with text extraction from PDFs.
 
-## 🏛️ About the RAG Architecture
+## 🏛️ The RAG Architecture Explained
 
-This application leverages a powerful RAG pipeline:
+This application is powered by a RAG pipeline, which is a fancy way of saying it's smart about how it reads your document. Here’s the breakdown:
 
-1.  **Load & Chunk:** The uploaded PDF is loaded and split into smaller, manageable text chunks.
-2.  **Embed & Store:** Each chunk is converted into a numerical vector (embedding) and stored in a high-speed FAISS vector database. This database is then cached locally on the server to make future use of the same document instantaneous.
-3.  **Retrieve & Generate:** When you request an analysis, the system retrieves the most relevant chunks from the database and provides them to the Gemini model as context, allowing it to generate an accurate, document-aware response.
+1.  **Load & Chunk:** First, the app ingests the uploaded PDF and breaks it down into smaller, more manageable chunks of text. This helps the AI focus on specific details.
+2.  **Embed & Store:** Each text chunk is converted into a numerical vector (an "embedding") and stored in a high-speed FAISS vector database. This database is then cached on the server, making future requests for the same document incredibly fast.
+3.  **Retrieve & Generate:** When you request an analysis, the system searches the vector database to find the most relevant chunks from the document. These chunks are then provided to the Gemini model as context, allowing it to generate an accurate, document-aware response instead of just making things up.
