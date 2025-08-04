@@ -1,38 +1,76 @@
----
-title: AI Report Analyzer
-emoji: 🤖
-colorFrom: blue
-colorTo: green
-sdk: gradio
-app_file: app.py
-pinned: false
----
-
 # 🤖 AI Report Analyzer
 
-This project is an intelligent app designed to tackle the pain of reading dense PDF documents. Feed it an annual report, a research paper, or any long PDF, and it leverages a Retrieval-Augmented Generation (RAG) pipeline to give you back the insights you need, fast.
+An intelligent application that uses a Retrieval-Augmented Generation (RAG) pipeline to analyze and summarize PDF documents like annual reports, financial statements, or research papers.
 
-## 🚀 How It Works
+<!-- You can add a screenshot or GIF of your app in action here! It makes the README look much better. -->
+<!-- ![App Demo](link_to_your_gif_or_screenshot.png) -->
 
-1.  **Upload a PDF** using the "Control Panel" on the left.
-2.  **Wait for the processing to finish.** The "Status" will change to **Ready!** when it's done.
-    *   *Heads up:* The first time you upload a document, it might take a moment to build the knowledge base. Subsequent analyses of the same file will be nearly instant thanks to caching.
-3.  **Click an analysis button** (e.g., 📄 Summary, 📊 SWOT Analysis, ⚠️ Risk Analysis).
-4.  **Check out the results** in the "Results" section at the bottom.
+## ✨ Features
+
+-   **Analyze Any PDF:** Upload long and dense documents for quick analysis.
+-   **Automated Summaries:** Get the key takeaways from a document in seconds.
+-   **In-Depth Analysis:** Perform a SWOT (Strengths, Weaknesses, Opportunities, Threats) or Risk Analysis based on the document's content.
+-   **Fast & Efficient:** Caches processed documents, so subsequent analyses on the same file are instantaneous.
 
 ## 🛠️ Tech Stack
 
--   **Core AI:** Google Gemini (`gemini-1.5-flash-latest`) - The brain of the operation.
--   **Orchestration Framework:** LangChain - For chaining everything together.
--   **User Interface:** Gradio - To spin up a simple and clean web UI.
--   **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2` - For turning text into meaningful vectors.
--   **Vector Database:** FAISS (`faiss-cpu`) - A super-fast, local vector store. No cloud dependencies!
--   **PDF Processing:** `pypdf` - For wrestling with text extraction from PDFs.
+-   **AI Model:** Google Gemini (`gemini-1.5-flash-latest`)
+-   **Framework:** LangChain for orchestrating the RAG pipeline.
+-   **User Interface:** Gradio for a simple and interactive web UI.
+-   **Vector Database:** FAISS (`faiss-cpu`) for efficient local similarity search.
+-   **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2`
+-   **PDF Processing:** `pypdf`
 
-## 🏛️ The RAG Architecture Explained
+## 🚀 Getting Started
 
-This application is powered by a RAG pipeline, which is a fancy way of saying it's smart about how it reads your document. Here’s the breakdown:
+Follow these instructions to get a copy of the project up and running on your local machine.
 
-1.  **Load & Chunk:** First, the app ingests the uploaded PDF and breaks it down into smaller, more manageable chunks of text. This helps the AI focus on specific details.
-2.  **Embed & Store:** Each text chunk is converted into a numerical vector (an "embedding") and stored in a high-speed FAISS vector database. This database is then cached on the server, making future requests for the same document incredibly fast.
-3.  **Retrieve & Generate:** When you request an analysis, the system searches the vector database to find the most relevant chunks from the document. These chunks are then provided to the Gemini model as context, allowing it to generate an accurate, document-aware response instead of just making things up.
+### Prerequisites
+
+-   Python 3.9+
+-   A Google API Key for using the Gemini model. You can get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+### Installation
+
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/your-username/your-repo-name.git
+    cd your-repo-name
+    ```
+
+2.  **Create and activate a virtual environment (recommended):**
+    ```sh
+    # For macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
+
+    # For Windows
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
+
+3.  **Install the required dependencies:**
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+4.  **Set up your environment variables:**
+    Create a file named `.env` in the root of the project and add your Google API key:
+    ```
+    GOOGLE_API_KEY="YOUR_API_KEY_HERE"
+    ```
+
+5.  **Run the application:**
+    ```sh
+    python app.py
+    ```
+
+    Open your web browser and navigate to the local URL provided in the terminal (usually `http://127.0.0.1:7860`).
+
+## 🏛️ How It Works: The RAG Pipeline
+
+This application leverages a powerful RAG (Retrieval-Augmented Generation) pipeline to ensure the AI's responses are grounded in the provided document.
+
+1.  **Load & Chunk:** The uploaded PDF is loaded and split into smaller, manageable text chunks.
+2.  **Embed & Store:** Each chunk is converted into a numerical vector (embedding) and stored in a high-speed FAISS vector database. This database is cached locally to make future use of the same document instantaneous.
+3.  **Retrieve & Generate:** When you request an analysis, the system retrieves the most relevant chunks from the database and provides them to the Gemini model as context. This allows it to generate an accurate, document-aware response.
